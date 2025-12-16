@@ -375,8 +375,16 @@ public class BankService
     }
     public Account CreateAccount(int clientId, string cur)
     {
-        var acc = new Account { Number = $"SHX-{Random.Shared.Next(1000, 9999)}-{Random.Shared.Next(10, 99)}", ClientId = clientId, Currency = cur };
-        _db.Accounts.Add(acc); _db.SaveChanges(); return acc;
+        string num;
+        do
+        {
+            num = $"SHX-{Random.Shared.Next(1000, 9999)}-{Random.Shared.Next(10, 99)}";
+        } while (_db.Accounts.Any(a => a.Number == num));
+
+        var acc = new Account { Number = num, ClientId = clientId, Currency = cur };
+        _db.Accounts.Add(acc);
+        _db.SaveChanges();
+        return acc;
     }
     public void DeleteAccount(string num) { var acc = GetAcc(num); _db.Accounts.Remove(acc); _db.SaveChanges(); }
 
